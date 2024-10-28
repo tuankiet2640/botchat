@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  api-gateway:
+    build:
+      context: ./api-gateway
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+
+  user-service:
+    build:
+      context: ./user-service
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081"
+
+  auth-service:
+    build:
+      context: ./auth-service
+      dockerfile: Dockerfile
+    ports:
+      - "8082:8082"
+
+  admin-service:
+    build:
+      context: ./admin-service
+      dockerfile: Dockerfile
+    ports:
+      - "8083:8083"
+
+  logging-service:
+    build:
+      context: ./logging-service
+      dockerfile: Dockerfile
+    ports:
+      - "8084:8084"
+
+  chatbot-service:
+    build:
+      context: ./chatbot-service
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+
+networks:
+  default:
+    driver: bridge
