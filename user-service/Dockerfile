@@ -1,23 +1,5 @@
-# Stage 1: Build the application
-FROM maven:3.8.5-openjdk-17 AS build
+FROM eclipse-temurin:17-jre-alpine
 
-WORKDIR /app
+COPY target/user-service*.jar app.jar
 
-# Copy POM file and source code
-COPY pom.xml .
-COPY src/ ./src
-
-# Download dependencies and build
-RUN mvn clean package -DskipTests
-
-# Stage 2: Create the runtime image
-FROM openjdk:17-jdk-slim
-
-WORKDIR /app
-
-# Copy the jar file from the build stage
-COPY --from=build /app/target/user-service.jar user-service.jar
-
-EXPOSE 8080
-
-ENTRYPOINT ["java", "-jar", "user-service.jar"]
+ENTRYPOINT ["java", "-jar", "/app.jar"]

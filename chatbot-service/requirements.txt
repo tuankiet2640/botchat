@@ -9,4 +9,3 @@ httpx
 azure-search-documents
 azure-ai-formrecognizer
 azure-identity
-py-eureka-client

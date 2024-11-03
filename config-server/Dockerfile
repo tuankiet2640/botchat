@@ -1,23 +1,9 @@
-# Build the application
-FROM maven:3.8.5-openjdk-17 AS build
-
-WORKDIR /app
-
-COPY pom.xml .
-RUN mvn dependency:go-offline
-
-COPY src/ ./src
-RUN mvn clean package -DskipTests
-
-COPY ./botchat /app
-
-# Run the application
-FROM openjdk:17-jdk-slim
-
-WORKDIR /app
-
-COPY --from=build /app/target/config-server.jar config-server.jar
-
+FROM eclipse-temurin:17-jre-alpine
+VOLUME /tmp
+# Install curl for healthcheck
+RUN apk add --no-cache curl
+COPY target/config-server*.jar app.jar
 EXPOSE 8888
-
-ENTRYPOINT ["java", "-jar", "config-server.jar"]
+ENTRYPOINT ["java", "-jar", "/app.jar"]
+HEALTHCHECK --interval=30s --timeout=10s --retries=3 \
+  CMD curl -f http://localhost:8888/actuator/health || exit 1

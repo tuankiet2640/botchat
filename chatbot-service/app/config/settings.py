@@ -2,8 +2,6 @@ from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    # Eureka Settings
-    EUREKA_SERVER_URL: str = "http://localhost:8761/eureka"
     APP_NAME: str = "chatbot-service"
     APP_PORT: int = 8000
     INSTANCE_HOST: str = "localhost"
