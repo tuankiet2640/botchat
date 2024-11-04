@@ -33,7 +33,6 @@ BotChat is a microservices-based chatbot platform that leverages Azure OpenAI an
   - Externalized configuration for all services
   - Environment-specific configurations
   - Dynamic configuration updates
-  - Health monitoring via Actuator
 
 ### Supporting Services
 
@@ -113,7 +112,6 @@ graph TD
         AzureSearch
     end
     
-    All[All Services] --> Postgres[(PostgreSQL)]
 ```
 
 ## Deployment Configuration
