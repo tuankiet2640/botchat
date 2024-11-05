@@ -8,14 +8,15 @@ class Settings(BaseSettings):
     INSTANCE_PORT: int = 8000
 
     # # Azure OpenAI Settings
-    # AZURE_OPENAI_API_KEY: str
+    AZURE_OPENAI_API_KEY: str
+    AZURE_OPENAI_ENGINE: str
     # AZURE_OPENAI_ENDPOINT: str
     # AZURE_OPENAI_DEPLOYMENT_NAME: str
     #
     # # Azure AI Search Settings
-    # AZURE_SEARCH_SERVICE_ENDPOINT: str
-    # AZURE_SEARCH_INDEX_NAME: str
-    # AZURE_SEARCH_API_KEY: str
+    AZURE_SEARCH_SERVICE_ENDPOINT: str
+    AZURE_SEARCH_INDEX: str
+    AZURE_SEARCH_API_KEY: str
     #
     # # Azure Document Intelligence Settings
     # AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT: str

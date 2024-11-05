@@ -1,32 +1,21 @@
-# from openai import AsyncAzureOpenAI
-# from app.config.settings import settings
-#
-#
-# class AzureOpenAIService:
-#     def __init__(self):
-#         self.client = AsyncAzureOpenAI(
-#             api_key=settings.AZURE_OPENAI_API_KEY,
-#             api_version="2024-02-15-preview",
-#             azure_endpoint=settings.AZURE_OPENAI_ENDPOINT
-#         )
-#
-#     async def generate_response(
-#             self,
-#             message: str,
-#             context: str
-#     ) -> str:
-#         try:
-#             completion = await self.client.chat.completions.create(
-#                 model=settings.AZURE_OPENAI_DEPLOYMENT_NAME,
-#                 messages=[
-#                     {"role": "system", "content": context},
-#                     {"role": "user", "content": message}
-#                 ],
-#                 temperature=settings.TEMPERATURE,
-#                 max_tokens=settings.MAX_TOKENS,
-#                 top_p=settings.TOP_P
-#             )
-#             return completion.choices[0].message.content
-#         except Exception as e:
-#             print(e)
-#             raise
+# Azure OpenAI Service
+import os
+import openai
+
+class AzureOpenAIService:
+    def __init__(self, api_key, engine):
+        self.api_key = api_key
+        self.engine = engine
+        openai.api_key = self.api_key
+
+    async def generate_response(self, message: str, context: str) -> str:
+        prompt = f"{context}\n\n{message}"
+        response = openai.Completion.create(
+            engine=self.engine,
+            prompt=prompt,
+            max_tokens=1024,
+            n=1,
+            stop=None,
+            temperature=0.7,
+        )
+        return response.choices[0].text.strip()
