@@ -18,7 +18,6 @@ public abstract class AbstractAuditEntity {
     @Column(name = "created_date", updatable = false)
     private Instant createdDate = Instant.now();
 
-
     @Column(name = "last_modified_date")
     private Instant lastModifiedDate = Instant.now();
 }
