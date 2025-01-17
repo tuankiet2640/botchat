@@ -1,24 +1,55 @@
-# Azure AI Search Service
 import os
-from azure.core.credentials import AzureKeyCredential
+import dotenv
 from azure.search.documents import SearchClient
+from azure.search.documents.models import VectorizedQuery
+from azure.core.credentials import AzureKeyCredential
 
-class AzureSearchService:
-    def __init__(self, endpoint, index_name, api_key):
-        self.endpoint = endpoint
-        self.index_name = index_name
-        self.api_key = api_key
+# Load environment variables
+dotenv.load_dotenv()
+
+# Azure AI Search configuration
+AZURE_SEARCH_SERVICE = os.getenv("AZURE_SEARCH_SERVICE")
+AZURE_SEARCH_ENDPOINT = f"https://{AZURE_SEARCH_SERVICE}.search.windows.net"
+AZURE_SEARCH_SERVICE_KEY = os.getenv("AZURE_SEARCH_SERVICE_KEY")
+AZURE_SEARCH_FULL_INDEX = "gptkbindex"
+
+
+class AzureAISearchClient:
+    def __init__(self):
+        search_service_cred = AzureKeyCredential(AZURE_SEARCH_SERVICE_KEY)
         self.search_client = SearchClient(
-            endpoint=self.endpoint,
-            index_name=self.index_name,
-            credential=AzureKeyCredential(self.api_key)
+            AZURE_SEARCH_ENDPOINT,
+            AZURE_SEARCH_FULL_INDEX,
+            credential=search_service_cred
         )
 
-    async def search(self, query: str, top: int = 3) -> list:
+    def search(self, user_question, embedding_func, top=5):
+        """
+        Perform semantic and vector search
+
+        :param user_question: Query string
+        :param embedding_func: Function to generate embeddings
+        :param top: Number of top results to return
+        :return: Formatted search results
+        """
+        user_question_vector = embedding_func(user_question)
+
         search_results = self.search_client.search(
-            search_text=query,
-            select=["metadata_storage_name", "content"],
-            top=top
+            user_question,
+            top=top,
+            vector_queries=[
+                VectorizedQuery(
+                    vector=user_question_vector,
+                    k_nearest_neighbors=50,
+                    fields="embedding"
+                )
+            ],
+            query_type="semantic",
+            semantic_configuration_name="default-semantic-config"
         )
-        sources = [result["metadata_storage_name"] for result in search_results]
+
+        sources = "\n".join([
+            f"{doc['sourcefile']}: {doc['content']}\n" for doc in search_results
+        ])
+
         return sources

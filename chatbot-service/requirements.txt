@@ -9,3 +9,8 @@ httpx
 azure-search-documents
 azure-ai-formrecognizer
 azure-identity
+
+numpy
+pandas
+pillow
+promptflow-evals

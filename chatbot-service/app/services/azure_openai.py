@@ -1,21 +1,45 @@
-# Azure OpenAI Service
 import os
+import dotenv
 import openai
 
-class AzureOpenAIService:
-    def __init__(self, api_key, engine):
-        self.api_key = api_key
-        self.engine = engine
-        openai.api_key = self.api_key
+# Load environment variables
+dotenv.load_dotenv()
 
-    async def generate_response(self, message: str, context: str) -> str:
-        prompt = f"{context}\n\n{message}"
-        response = openai.Completion.create(
-            engine=self.engine,
-            prompt=prompt,
-            max_tokens=1024,
-            n=1,
-            stop=None,
-            temperature=0.7,
+# Azure OpenAI configuration
+AZURE_OPENAI_SERVICE = os.getenv("AZURE_OPENAI_SERVICE")
+AZURE_OPENAI_EMBEDDING_DEPLOYMENT = os.getenv("AZURE_OPENAI_EMBEDDING_DEPLOYMENT")
+AZURE_OPENAI_DEPLOYMENT_NAME = os.getenv("AZURE_OPENAI_DEPLOYMENT_NAME")
+
+
+class AzureOpenAIClient:
+    def __init__(self):
+        self.client = openai.AzureOpenAI(
+            api_version="2023-07-01-preview",
+            azure_endpoint=f"https://{AZURE_OPENAI_SERVICE}.openai.azure.com"
         )
-        return response.choices[0].text.strip()
+
+    def get_embedding(self, text):
+        """
+        Generate embeddings for given text
+
+        :param text: Input text to generate embedding for
+        :return: Embedding vector
+        """
+        get_embeddings_response = self.client.embeddings.create(
+            model=AZURE_OPENAI_EMBEDDING_DEPLOYMENT,
+            input=text
+        )
+        return get_embeddings_response.data[0].embedding
+
+    def generate_response(self, messages):
+        """
+        Generate a response using Azure OpenAI
+
+        :param messages: List of message dictionaries
+        :return: Generated response
+        """
+        response = self.client.chat.completions.create(
+            model=AZURE_OPENAI_DEPLOYMENT_NAME,
+            messages=messages
+        )
+        return response.choices[0].message.content
